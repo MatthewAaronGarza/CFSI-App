@@ -10,7 +10,7 @@ interface CarouselProps {
 const Carousel = (props: CarouselProps) => {
   return (
     <View style={{ flexDirection: 'row' }}>
-        <FlatList data={props.data} renderItem={({ item, index }) => {
+        <FlatList nestedScrollEnabled data={props.data} renderItem={({ item, index }) => {
             return (
                 <Card style={{ margin: 16 }}>
                     {/* <Card.Title title="Card Title" subtitle="Card Subtitle" left={LeftContent} /> */}
@@ -33,6 +33,7 @@ const Carousel = (props: CarouselProps) => {
         }}
         horizontal={props.horizontal}
         showsHorizontalScrollIndicator={false}
+        scrollEnabled={true}
         // keyExtractor={item => item.id}
         />
     </View>
