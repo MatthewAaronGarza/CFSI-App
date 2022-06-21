@@ -1,29 +1,47 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
-import { Button, TextInput, Title } from 'react-native-paper'
-import { auth } from '../firebase'
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import React, { memo, useEffect, useState } from 'react';
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import Background from '../components/Background';
+import Logo from '../components/Logo';
+import Header from '../components/Header';
+import Button from '../components/Button';
+import TextInput from '../components/TextInput';
+import { theme } from '../core/theme';
+import { emailValidator, passwordValidator } from '../core/utils';
+import { Navigation } from '../core/types';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
-const Login = ({ navigation }: any) => {
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [loggedIn, setLoggedIn] = React.useState(false)
+type Props = {
+  navigation: Navigation;
+};
 
+const LoginScreen = ({ navigation }: Props) => {
+  const [email, setEmail] = useState({ value: '', error: '' });
+  const [password, setPassword] = useState({ value: '', error: '' });
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigation.navigate("Stack")
+        navigation.navigate("Agri")
       }
-    })
+    });
 
     return unsubscribe
   }, []);
 
   const LogInUser = () => {
-    signInWithEmailAndPassword(auth, email, password)
+    const emailError = emailValidator(email.value);
+    const passwordError = passwordValidator(password.value);
+
+    if (emailError || passwordError) {
+      setEmail({ ...email, error: emailError });
+      setPassword({ ...password, error: passwordError });
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email.value, password.value)
       .then(() => {
-        setLoggedIn(true)
+        // setLoggedIn(true)
       })
       .catch(error => {
         console.log(error)
@@ -33,7 +51,7 @@ const Login = ({ navigation }: any) => {
   const LogOutUser = () => {
     signOut(auth)
       .then(() => {
-        setLoggedIn(false)
+        // setLoggedIn(false)
       })
       .catch(error => {
         console.log(error)
@@ -41,27 +59,91 @@ const Login = ({ navigation }: any) => {
   }
 
   const GoToRegister = () => {
-    navigation.replace("Register")
+    navigation.navigate("Register")
   }
 
+  const _onLoginPressed = () => {
+    const emailError = emailValidator(email.value);
+    const passwordError = passwordValidator(password.value);
+
+    if (emailError || passwordError) {
+      setEmail({ ...email, error: emailError });
+      setPassword({ ...password, error: passwordError });
+      return;
+    }
+
+    navigation.navigate('Dashboard');
+  };
+
   return (
-    <View style={styles.container}>
-      <Title>Login</Title>
-      <TextInput mode='outlined' label="Email" value={email} onChangeText={(text) => setEmail(text)} />
-      <TextInput mode='outlined' label="Password" value={password} onChangeText={(text) => setPassword(text)} secureTextEntry />
-      <Text onPress={GoToRegister}>Don't have an account? Register here</Text>
-      {loggedIn === true ? <Button mode='contained' onPress={LogOutUser}>Log Out</Button> : <Button mode='contained' onPress={LogInUser}>Log In</Button>}
-    </View>
-  )
-}
+    <Background>
+      <Logo />
+
+      <Header>Welcome to Agri</Header>
+
+      <TextInput
+        label="Email"
+        returnKeyType="next"
+        value={email.value}
+        onChangeText={text => setEmail({ value: text, error: '' })}
+        error={!!email.error}
+        errorText={email.error}
+        autoCapitalize="none"
+        autoComplete="email"
+        textContentType="emailAddress"
+        keyboardType="email-address"
+      />
+
+      <TextInput
+        label="Password"
+        returnKeyType="done"
+        value={password.value}
+        onChangeText={text => setPassword({ value: text, error: '' })}
+        error={!!password.error}
+        errorText={password.error}
+        secureTextEntry
+      />
+
+      <View style={styles.forgotPassword}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
+          <Text style={styles.label}>Forgot your password?</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Button mode="contained" onPress={LogInUser}>
+        Login
+      </Button>
+
+      <View style={styles.row}>
+        <Text style={styles.label}>Don’t have an account? </Text>
+        <TouchableOpacity onPress={GoToRegister}>
+          <Text style={styles.link}>Register</Text>
+        </TouchableOpacity>
+      </View>
+    </Background>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  forgotPassword: {
+    width: '100%',
+    alignItems: 'flex-end',
+    marginBottom: 24,
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 4,
+  },
+  label: {
+    color: theme.colors.secondary,
+  },
+  link: {
+    fontWeight: 'bold',
+    color: theme.colors.primary,
+    // color: theme.colors.main,
   },
 });
 
-export default Login
+export default memo(LoginScreen);

@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import AppDrawer from './navigation/AppDrawer';
-import AppTabs from './navigation/AppTabs';
 import AppStack from './navigation/AppStack';
 
 function Feed({ navigation }: any) {
@@ -19,8 +17,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <AppStack />
-      {/* <AppDrawer /> */}
-      {/* <AppTabs /> */}
     </NavigationContainer>
   );
 }
