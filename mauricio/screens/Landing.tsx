@@ -7,11 +7,11 @@ import Paragraph from '../components/Paragraph';
 import { Navigation } from '../core/types';
 import { auth } from '../firebase';
 
-type Props = {
+type LandingProps = {
     navigation: Navigation;
 };
 
-const Landing = ({ navigation }: Props) => {
+const Landing = ({ navigation }: LandingProps) => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {

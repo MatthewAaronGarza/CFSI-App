@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AppBar from '../components/AppBar';
 import { StyleSheet, View } from 'react-native';
 import { signOut } from 'firebase/auth';
+import Checkout from '../screens/Checkout';
 
 const Drawer = createDrawerNavigator();
 
@@ -27,54 +28,36 @@ const AppDrawer = ({ navigation }: any) => {
     const LogOutUser = () => {
         signOut(auth)
             .then(() => {
-                // setLoggedIn(false)
                 console.log(auth)
             })
             .catch(error => {
                 console.log(error)
             })
     }
-    
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            if (!user) {
-                navigation.navigate("Landing")
-            }
-        });
-
-        return unsubscribe
-    }, []);
 
     return (
         <Drawer.Navigator
             useLegacyImplementation
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
-                // headerShown: false,
+                headerTitle: "CFSI App",
                 headerStyle: { backgroundColor: theme.colors.main },
                 headerTintColor: 'white',
                 headerRight: () => (
                     <View style={{ flexDirection: 'row' }}>
-                        <Ionicons name={"basket"} size={28} color={"white"} style={styles.icon} />
-                        <Ionicons name={"log-out"} size={28} color={"white"} style={styles.icon} onPress={LogOutUser} />
+                        <Ionicons name={"basket"} size={28} color={"white"} style={styles.icon} onPress={() => navigation.navigate('Checkout')} />
+                        <Ionicons name={"log-out-outline"} size={28} color={"white"} style={styles.icon} onPress={LogOutUser} />
                     </View>
-                ),
-                // header: (props) => <AppBar {...props} />
+                )
             }}
         >
-            <Drawer.Screen name="Home" component={Home} options={{
-                // drawerIcon: ({ focused, size }) => (
-                //     <Ionicons
-                //         name="basket"
-                //         size={24}
-                //         color={focused ? '#7cc' : '#ccc'}
-                //     />
-                // ), 
-            }}/>
+            <Drawer.Screen name="Home" component={Home} />
             <Drawer.Screen name="Chat" component={Chat} />
             <Drawer.Screen name="Map" component={Map} />
             <Drawer.Screen name="Events" component={Events} />
             <Drawer.Screen name="Account" component={Account} />
+            <Drawer.Screen name="Market" component={Market} options={{ drawerItemStyle: { display: 'none' } }}/>
+            <Drawer.Screen name="Checkout" component={Checkout} options={{ drawerItemStyle: { display: 'none' } }}/>
         </Drawer.Navigator>
     );
 }

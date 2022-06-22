@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, Dimensions } from 'react-native';
 const Map = () => {
   return (
     <View style={styles.container}>
-      <MapView
+      {/* <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         showsUserLocation
@@ -15,7 +15,7 @@ const Map = () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
         }}
-      />
+      /> */}
     </View>
   );
 }

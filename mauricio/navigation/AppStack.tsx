@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../screens/Login';
@@ -14,30 +14,35 @@ import { auth } from '../firebase';
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
+
+    // Handle user state changes
+    function onAuthStateChanged(user: any) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    useEffect(() => {
+        const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    }, []);
+
+    if (initializing) return null;
+    
     return (
-        <Stack.Navigator 
-            screenOptions={{ 
-                headerShown: false,
-            }}
-        >
-            {/* {auth ? (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {user ? (
                 <>
-                    <Stack.Screen name="Agri" component={Platform.OS === 'web' ? AppDrawer : AppTabs} />
-                    <Stack.Screen name="Market" component={Market} />
+                    <Stack.Screen name="Home" component={Platform.OS === 'web' ? AppDrawer : AppTabs} />
                 </>
             ) : (
                 <>
-                    <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
-                    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-                    <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+                    <Stack.Screen name="Landing" component={Landing} />
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Register" component={Register} />
                 </>
-            )} */}
-
-            <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-            <Stack.Screen name="Agri" component={Platform.OS === 'web' ? AppDrawer : AppTabs} />
-            <Stack.Screen name="Market" component={Market} />
+            )}
         </Stack.Navigator>
     );
 }

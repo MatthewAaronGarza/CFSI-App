@@ -1,10 +1,12 @@
 import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native'
 import React from 'react'
 import { Button, Card, Chip, Surface } from 'react-native-paper'
+import { Navigation } from '../core/types';
 
 interface CarouselProps {
     data: any;
     horizontal?: boolean;
+    navigation?: Navigation;
 }
 
 const Carousel = (props: CarouselProps) => {
@@ -24,7 +26,7 @@ const Carousel = (props: CarouselProps) => {
                                 <Chip style={styles.chip}>Tomatoes</Chip>
                             </View>
                             <Card.Actions>
-                                <Button>View Products</Button>
+                                <Button onPress={() => {props.navigation?.navigate("Market")}}>View Products</Button>
                             </Card.Actions>
                         </Card.Content>
                     </Surface>

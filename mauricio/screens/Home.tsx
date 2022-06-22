@@ -1,11 +1,8 @@
-import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native'
-import React from 'react'
+import { View, StyleSheet, ScrollView } from 'react-native'
+import React, { useEffect } from 'react'
 import { Button, Card, Chip, Searchbar, Surface, Title } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Producer from '../components/Producer';
-import Markets from './Markets';
-import { FlatList } from 'react-native-gesture-handler';
 import Carousel from '../components/Carousel';
+import { Navigation } from '../core/types';
 
 const data = [
   {
@@ -40,29 +37,38 @@ const data = [
   },
 ];
 
-const Home = () => {
+type HomeProps = {
+  navigation: Navigation;
+};
+
+const Home = ({ navigation }: HomeProps) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
+
+  useEffect(() => {
+    // When first starting up the page, retrieve the markets, producers, etc. near you 
+    // From the database to show on the home page
+  }, [])
 
   return (
     <ScrollView>
       {/* <Searchbar placeholder='Search' onChangeText={onChangeSearch} value={searchQuery} /> */}
       <View>
         <Title style={{ margin: 16 }}>Highest Rated Vendors Near You</Title>
-        <Carousel data={data} horizontal={true} />
+        <Carousel data={data} horizontal={true} navigation={navigation} />
       </View>
       <View>
         <Title style={{ margin: 16 }}>Markets</Title>
-        <Carousel data={data} horizontal={true} />
+        <Carousel data={data} horizontal={true} navigation={navigation} />
       </View>
       <View>
         <Title style={{ margin: 16 }}>Producers</Title>
-        <Carousel data={data} horizontal={true} />
+        <Carousel data={data} horizontal={true} navigation={navigation} />
       </View>
       <View>
         <Title style={{ margin: 16 }}>Educational Videos</Title>
-        <Carousel data={data} horizontal={true} />
+        <Carousel data={data} horizontal={true} navigation={navigation} />
       </View>
     </ScrollView>
   )
